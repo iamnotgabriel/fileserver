@@ -18,20 +18,24 @@ public class ClientThread extends Thread {
 	}
 
 	public Response login(Request req) {
+		// lista com todos os usuários
 		List<String[]> lines = server.users.readLines();
+		// pega o login e a senha que estão como usuario no request
 		User user = req.getUser();
+		// resposta do pedido 
 		Response resp = Response.login(user, Response.FALIED);
-		
+		// login com nenhum usuario cadastrado devolve falha
 		if(lines == null) {
 			return resp;
 		}
-		
+		// procura um login e senha que foram passados no pedido
+		int l = server.users.getCol("login");
+		int p = server.users.getCol("password");
 		for(String[] line: lines) {
-			int l = server.users.getCol("login");
-			int p = server.users.getCol("password");
 			boolean login = user.getLogin().equals(line[l]);
 			boolean password = user.getPassword().equals(line[p]);
 			if( login && password ) {
+				// se login e senha for validos devolve o usuario e reposta OK
 				user = new User(line);
 				resp.setUser(user);
 				resp.setStatus(Response.OK);
@@ -60,16 +64,18 @@ public class ClientThread extends Thread {
 			
 			// converte a menagem em um objeto Mensagem
 			Request req = new Gson().fromJson(msgStr, Request.class);
-			// executa a o metedo desejado
+			// inicializa 
+			Response resp = Response.failed("Comando inválido");
+			// executa a o comando desejado do request
 			switch(req.getCmd()) {
 				case Request.LOGIN:
-					Response resp = login(req);
-					System.out.println(resp);
-					client.writer.println(resp);
+					resp = login(req);
 					break;
 				case Request.SIGNIN:
 					break;
 			}
+			System.out.println(resp);
+			client.writer.println(resp);
 		}
 		// log de saída
 		System.out.println("Cliente " + client.conn.getRemoteSocketAddress() +" desconectado");

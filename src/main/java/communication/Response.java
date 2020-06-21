@@ -56,4 +56,8 @@ public class Response {
 		return new Response(user, null, status, null);
 	}
 	
+	public static Response failed(String content) {
+		return new Response(null, null, Response.FALIED, content);
+	}
+	
 }

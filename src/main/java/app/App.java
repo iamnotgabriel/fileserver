@@ -12,6 +12,7 @@ public class App {
 	public static void main(String[] args) throws Exception {
 		if(readArgs(args)) {
 			// cadastro de usuarios
+			// usar readOption to login
 		}
 		socket = new Client(host, port);
 		user = new User(login, password);
